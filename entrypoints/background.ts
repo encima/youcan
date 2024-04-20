@@ -1,0 +1,110 @@
+import { onMessage, sendMessage } from "webext-bridge/background";
+import { storage } from 'wxt/storage';
+export default defineBackground(() => {
+  console.log('Hello background!', { id: browser.runtime.id });
+
+  onMessage('translate', ({ data }) => {
+    const { words } = data;
+    translateWithDeepl(words).then((translatedWords) => {
+      browser.tabs
+        .query({ currentWindow: true, active: true })
+        .then((tabs) => {
+          ;
+          sendMessage('translated', { translated: translatedWords }, 'content-script@' + tabs[0].id);
+        });
+    });
+  });
+
+  onMessage('youcan', () => {
+    browser.tabs
+      .query({ currentWindow: true, active: true })
+      .then((tabs) => {
+        ;
+        sendMessage('youcan', {}, 'content-script@' + tabs[0].id);
+      });
+  })
+
+  // browser.action.onClicked.addListener((tab) => {
+  //   sendMessage('youcan', {}, 'content-script@' + tab.id);
+  // });
+
+
+  browser.commands.onCommand.addListener((msg) => {
+    console.log(msg);
+    if (msg === "youcan") {
+      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
+        sendMessage('youcan', {}, 'content-script@' + tabs[0].id)
+      });
+    }
+  });
+
+  async function loadConfig() {
+    try {
+      // Fetch the local config.json file
+      const response = await fetch(browser.runtime.getURL('/config.json'));
+      const config = await response.json();
+
+      return config;
+    } catch (error) {
+      console.error('Error loading config.json:', error);
+    }
+  }
+
+
+
+  async function formatWithOllama(content: any[], random: boolean = true) {
+    for (let i = 0; i < content.length; i++) {
+      ``
+      const resp = await fetch('http://localhost:11434/api/generate ', {
+        method: 'POST',
+        body: JSON.stringify({
+          model: 'mistrallite',
+          stream: 'false',
+          format: 'json',
+          prompt: 'Pick a random word from the sentence and translate it to Swedish: ' + content[i].context
+        })
+      });
+      const body = await resp.json();
+    }
+  }
+
+  async function translateWithDeepl(content: any[], random: boolean = true) {
+    try {
+      const config = await loadConfig();
+      const key = config.deeplKey;
+      const lang = config.targetLang;
+      let words: string[] = content.map((word) => word.text[0]);
+      let context = content.map((word) => word.context).join('\n');
+      let reqBody = JSON.stringify({
+        'text': words,
+        'target_lang': lang,
+        'context': context
+      });
+      const resp = await fetch('https://api-free.deepl.com/v2/translate', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'DeepL-Auth-Key ' + key,
+          'Content-Type': 'application/json'
+        },
+        body: reqBody
+      });
+      if (!resp.ok) {
+        console.log(resp.status);
+        return content;
+      }
+      const body = await resp.json();
+      body.translations.forEach((translation: any, i: number) => {
+        content[i].translated = translation.text
+      });
+      // content[i].translated = body.translations[0].text
+      // }
+      return content;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+});
+
+
