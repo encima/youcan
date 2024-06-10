@@ -33,29 +33,6 @@ export default defineBackground(() => {
     });
   });
 
-  onMessage('youcan', () => {
-    browser.tabs
-      .query({ currentWindow: true, active: true })
-      .then((tabs) => {
-        ;
-        sendMessage('youcan', {}, 'content-script@' + tabs[0].id);
-      });
-  })
-
-  // browser.action.onClicked.addListener((tab) => {
-  //   sendMessage('youcan', {}, 'content-script@' + tab.id);
-  // });
-
-
-  browser.commands.onCommand.addListener((msg) => {
-    console.log(msg);
-    if (msg === "youcan") {
-      browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-        sendMessage('youcan', {}, 'content-script@' + tabs[0].id)
-      });
-    }
-  });
-
   async function loadConfig() {
     try {
       const response = await fetch(browser.runtime.getURL('/config.json'));
@@ -66,6 +43,16 @@ export default defineBackground(() => {
       return null;
     }
   }
+  browser.commands.onCommand.addListener((command) => {
+    if (command === "start-translate") {
+      browser.tabs
+        .query({ currentWindow: true, active: true })
+        .then((tabs) => {
+            sendMessage('start-translate', {}, 'content-script@' + tabs[0].id);
+        });
+    }
+  });
+
 
   async function formatWithOllama(content: any[], random: boolean = true) {
     for (let i = 0; i < content.length; i++) {
