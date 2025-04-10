@@ -14,9 +14,7 @@ Toucan is awesome and infinitely more well made, but it does not (yet) support S
 ## How?
 
 - Clone the repo
-- Create a `config.json` in the `public` folder 
-- Add your DeepL API Key under the key: `deeplKey` 
-- Add your target language under the key: `targetLang`
 - Run `npm run build`
 - Load the extension (saved in `.output`) using the `chrome://extensions` page
+- Open the extension options and add your DeepL key and preferred language
 - Navigate to any page and use the default shortcut to run: `Ctrl/Cmd+Shift+7`

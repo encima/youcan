@@ -5,23 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Youcan Options</title>
     <meta name="manifest.open_in_tab" content="true" />
-    <select id="language">
-      <option value="fi">Finnish</option>
-      <option value="sv">Swedish</option>
-      <option value="de">German</option>
-    </select>
-
-    <label>
-      <input type="text" id="deepl-key" />
-      DeepL API Key
-    </label>
-
-    <div id="status"></div>
-    <button id="save">Save</button>
-
-    <script src="options.js" type="module"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+      .option-group {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+      select, input[type="text"], input[type="number"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button#reset {
+        background-color: #f44336;
+      }
+      #status {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #d4edda;
+        color: #155724;
+        display: none;
+      }
+    </style>
   </head>
   <body>
-    <!-- ... -->
+    <h1>Youcan Extension Options</h1>
+    
+    <div class="option-group">
+      <label for="language">Target Translation Language:</label>
+      <select id="language">
+        <option value="BG">Bulgarian</option>
+        <option value="CS">Czech</option>
+        <option value="DA">Danish</option>
+        <option value="DE">German</option>
+        <option value="EL">Greek</option>
+        <option value="EN-GB">English (British)</option>
+        <option value="EN-US">English (American)</option>
+        <option value="ES">Spanish</option>
+        <option value="ET">Estonian</option>
+        <option value="FI">Finnish</option>
+        <option value="FR">French</option>
+        <option value="HU">Hungarian</option>
+        <option value="ID">Indonesian</option>
+        <option value="IT">Italian</option>
+        <option value="JA">Japanese</option>
+        <option value="KO">Korean</option>
+        <option value="LT">Lithuanian</option>
+        <option value="LV">Latvian</option>
+        <option value="NB">Norwegian</option>
+        <option value="NL">Dutch</option>
+        <option value="PL">Polish</option>
+        <option value="PT-BR">Portuguese (Brazilian)</option>
+        <option value="PT-PT">Portuguese (European)</option>
+        <option value="RO">Romanian</option>
+        <option value="RU">Russian</option>
+        <option value="SK">Slovak</option>
+        <option value="SL">Slovenian</option>
+        <option value="SV">Swedish</option>
+        <option value="TR">Turkish</option>
+        <option value="UK">Ukrainian</option>
+        <option value="ZH">Chinese (simplified)</option>
+      </select>
+    </div>
+    
+    <div class="option-group">
+      <label for="deepl-key">DeepL API Key:</label>
+      <input type="text" id="deepl-key" placeholder="Enter your DeepL API key here" />
+      <p><small>You can get a free API key from <a href="https://www.deepl.com/pro-api" target="_blank">DeepL's website</a></small></p>
+    </div>
+    
+    <div class="option-group">
+      <label for="word-count">Number of words to translate:</label>
+      <input type="number" id="word-count" min="1" max="50" value="10" />
+    </div>
+
+    <div id="status"></div>
+    
+    <div class="buttons">
+      <button id="save">Save Options</button>
+      <button id="reset">Reset to Defaults</button>
+    </div>
+
+    <script src="options.js" type="module"></script>
   </body>
 </html>
