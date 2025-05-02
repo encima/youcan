@@ -1,19 +1,37 @@
 import { onMessage, sendMessage } from "webext-bridge/background";
-import { storage } from 'wxt/storage';
+import { storage } from '@wxt-dev/storage';
+import { getTranslation, setTranslation } from './idb.js';
 
 export default defineBackground(() => {
   console.log('Setting up Youcan', { id: browser.runtime.id });
 
   // Listen for translate message from content script
-  onMessage('translate', ({ data }) => {
+  onMessage('translate', async ({ data }) => {
     const { words } = data;
-    translateWithDeepl(words).then((translatedWords) => {
-      browser.tabs
-        .query({ currentWindow: true, active: true })
-        .then((tabs) => {
-          sendMessage('translated', { translated: translatedWords }, 'content-script@' + tabs[0].id);
-        });
-    });
+    const url = (await browser.tabs.query({ active: true, currentWindow: true }))[0]?.url;
+    if (url) {
+      // Check cache first
+      const cached = await getTranslation(url);
+      if (cached && Array.isArray(cached) && cached.length === words.length) {
+        // Use cached translation
+        browser.tabs
+          .query({ currentWindow: true, active: true })
+          .then((tabs) => {
+            sendMessage('translated', { translated: cached }, 'content-script@' + tabs[0].id);
+          });
+        return;
+      }
+    }
+    // Not cached or cache miss, translate
+    const translatedWords = await translateWithDeepl(words);
+    if (url) {
+      await setTranslation(url, translatedWords);
+    }
+    browser.tabs
+      .query({ currentWindow: true, active: true })
+      .then((tabs) => {
+        sendMessage('translated', { translated: translatedWords }, 'content-script@' + tabs[0].id);
+      });
   });
 
   // Listen for keyboard shortcut to start translation
@@ -70,8 +88,8 @@ export default defineBackground(() => {
         if (resp.status === 403) {
           browser.notifications.create({
             type: 'basic',
-            iconUrl: browser.runtime.getURL('icon/128.png'),
-            title: 'DeepL API Error',
+            iconUrl: browser.runtime.getURL('/icon/128.png'),
+            title: 'DeepL API Error',   
             message: 'Authentication failed. Please check your API key in the options page.'
           });
         }
@@ -90,7 +108,7 @@ export default defineBackground(() => {
       // Show error notification
       browser.notifications.create({
         type: 'basic',
-        iconUrl: browser.runtime.getURL('icon/128.png'),
+        iconUrl: browser.runtime.getURL('/icon/128.png'),
         title: 'Translation Error',
         message: 'An error occurred during translation. Please try again.'
       });

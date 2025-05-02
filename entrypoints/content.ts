@@ -1,6 +1,6 @@
 import { sendMessage, onMessage } from "webext-bridge/content-script";
 import { Readability } from '@mozilla/readability';
-import { storage } from 'wxt/storage';
+import { storage } from '@wxt-dev/storage';
 
 export default defineContentScript({
   matches: ['<all_urls>'],

@@ -4,7 +4,10 @@ import { defineConfig } from 'wxt';
 export default defineConfig({
 
   manifest: {
-    permissions: ['storage', 'tabs'],
+    permissions: ['storage', 'tabs', 'webRequest'],
+    host_permissions: [
+      "https://api.deepl.com/*"
+    ],
     commands: {
       "start-translate": {
         suggested_key: { default: 'Ctrl + Shift + 7' },
@@ -12,5 +15,11 @@ export default defineConfig({
       }
     }
   },
+  webExtConfig: {
+    binaries: {
+      firefox: '/Applications/FirefoxDeveloperEdition.app/Contents/MacOS/firefox', // Use Firefox Developer Edition instead of regular Firefox
+    },
+  }
 
 });
+

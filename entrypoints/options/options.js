@@ -1,4 +1,4 @@
-import { storage } from 'wxt/storage';
+import { storage } from '@wxt-dev/storage';
 
 // Default values
 const DEFAULT_LANGUAGE = 'FI';

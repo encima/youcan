@@ -1,0 +1,14 @@
+[
+  {
+    "finnish": "Mikä on nimesi?",
+    "answer": "Nimeni on Anna.",
+    "english": "What is your name?",
+    "answer_en": "My name is Anna."
+  },
+  {
+    "finnish": "Mistä olet kotoisin?",
+    "answer": "Olen kotoisin Suomesta.",
+    "english": "Where are you from?",
+    "answer_en": "I am from Finland."
+  }
+]
